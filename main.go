@@ -84,9 +84,9 @@ func biteComparison(path string, info os.FileInfo) (string, bool) {
 			str.repeatedRequest = true
 			byteMap := map[string]string{}
 			byteMap[elementCurrentFile] = str.buf
+			str.byteMap = byteMap
 			return str.buf, true
 		}
-
 		byteMap := map[string]string{}
 		byteMap[elementCurrentFile] = path
 		byteMap[elementSavedFile] = str.buf
@@ -105,20 +105,23 @@ func biteComparison(path string, info os.FileInfo) (string, bool) {
 
 func hashComparison(path string, sp string, info os.FileInfo) bool {
 	str := unique[info.Size()]
-	var hashMap map[string]string
 	hash := hashFilePath(path)
 	if path != sp {
-		hashMap = make(map[string]string)
 		hashSp := hashFilePath(sp)
 		if hash == hashSp {
+			hashMap := make(map[string]string)
+			hashMap[hash] = path
 			hashMap[hashSp] = sp
+			str.hashMap = hashMap
 			return true
 		}
+		hashMap := make(map[string]string)
+		hashMap[hashSp] = sp
+		str.hashMap = hashMap
+		return false
 
-	} else {
-		hashMap = str.hashMap
 	}
-
+	hashMap := str.hashMap
 	if _, ok := hashMap[hash]; ok {
 		return true
 	}
@@ -163,6 +166,7 @@ func main() {
 				fmt.Println("verified", item, "from", itemsFile, "file(s)")
 
 				if _, ok := unique[info.Size()]; ok {
+
 					if sp, ok := biteComparison(path, info); ok {
 						if ok := hashComparison(path, sp, info); ok {
 							itemCopy++
