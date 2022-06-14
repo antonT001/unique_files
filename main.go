@@ -93,14 +93,14 @@ func biteComparison(path string, info os.FileInfo) (string, bool) {
 		str.byteMap = byteMap
 		return path, false
 
-	} else {
-		byteMap := str.byteMap
-		if _, ok := byteMap[elementCurrentFile]; ok {
-			return path, true
-		}
-		byteMap[elementCurrentFile] = path
-		return path, false
 	}
+	byteMap := str.byteMap
+	if _, ok := byteMap[elementCurrentFile]; ok {
+		return path, true
+	}
+	byteMap[elementCurrentFile] = path
+	return path, false
+	
 }
 
 func hashComparison(path string, sp string, info os.FileInfo) bool {
